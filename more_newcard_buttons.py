@@ -58,7 +58,6 @@ extra_buttons = [{"Description": "3-4d", "Label": "3-4", "ShortCut": "5", "Resch
 assert len(extra_buttons) <= 4
 
 from aqt.reviewer import Reviewer
-from aqt.utils import showInfo
 from anki.hooks import wrap
 
 #Anki uses a single digit to track which button has been clicked.
@@ -93,7 +92,7 @@ def _answerButtons(self):
             buf += '''
 <td align=center><span class=nobold>%s</span><br><button title="Short key: %s" onclick='py.link("ease%d");'>\
 %s</button></td>''' % (buttonItem["Description"], buttonItem["ShortCut"], i + INTERCEPT_EASE_BASE, buttonItem["Label"])
-        #swAdded end
+            #swAdded end
     buf += "</tr></table>"
     script = """
 <script>$(function () { $("#defease").focus(); });</script>"""
