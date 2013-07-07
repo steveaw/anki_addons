@@ -5,11 +5,11 @@ License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 """
 from PyQt4.QtCore import SIGNAL
 from anki.hooks import addHook, wrap
+from anki.sched import Scheduler
 from aqt.reviewer import Reviewer
 
+
 __author__ = 'Steve'
-
-
 
 
 def add_unseen_tags_to_selected(self):
@@ -28,17 +28,17 @@ def add_unseen_tags_to_selected(self):
     self.mw.requireReset()
     #self.mw.progress.finish()
 
-def remove_unseen_tags_from_selected(self):
-        #self is browser
-        #There is a chance this will miss some if card numbers have changed
-        selected_cids = self.selectedCards()
-        for cid in selected_cids:
-            unseen_card = self.col.getCard(cid)
-            unseen_note = unseen_card.note()
-            unseen_note.deTag("nsN")
-            unseen_note.delTag("ns%s" % unseen_card.ord)
-            unseen_note.flush()
 
+def remove_unseen_tags_from_selected(self):
+    #self is browser
+    #There is a chance this will miss some if card numbers have changed
+    selected_cids = self.selectedCards()
+    for cid in selected_cids:
+        unseen_card = self.col.getCard(cid)
+        unseen_note = unseen_card.note()
+        unseen_note.deTag("nsN")
+        unseen_note.delTag("ns%s" % unseen_card.ord)
+        unseen_note.flush()
 
 
 def change_background_color(self):
@@ -47,7 +47,21 @@ def change_background_color(self):
     pot_unseen_card = self.card
     pot_unseen_note = pot_unseen_card.note()
     if pot_unseen_note.hasTag("nsN") or pot_unseen_note.hasTag("ns%s" % pot_unseen_card.ord):
+        #todo: this can get cached? By what?
         self.web.eval('document.body.style.backgroundColor = "#DCDCFF"')
+
+
+def _remove_unseen_tags_for_card_and_note(pot_unseen_card, pot_unseen_note):
+    if pot_unseen_note.hasTag("nsN") or pot_unseen_note.hasTag("ns%s" % pot_unseen_card.ord):
+        pot_unseen_note.delTag("nsN")
+        pot_unseen_note.delTag("ns%s" % pot_unseen_card.ord)
+        pot_unseen_note.flush()
+
+
+def _remove_unseen_tags(self):
+    pot_unseen_card = self.card
+    pot_unseen_note = pot_unseen_card.note()
+    _remove_unseen_tags_for_card_and_note(pot_unseen_card, pot_unseen_note)
 
 
 def answer_card_removing_unseen_tags(self, ease):
@@ -57,17 +71,15 @@ def answer_card_removing_unseen_tags(self, ease):
         return
     if self.state != "answer":
         return
-    pot_unseen_card = self.card
-    pot_unseen_note = pot_unseen_card.note()
-    if pot_unseen_note.hasTag("nsN") or pot_unseen_note.hasTag("ns%s" % pot_unseen_card.ord):
-        pot_unseen_note.delTag("nsN")
-        pot_unseen_note.delTag("ns%s" % pot_unseen_card.ord)
-        pot_unseen_note.flush()
+    _remove_unseen_tags(self)
 
 
-
-
-
+def suspend_cards_removing_unseen_tags(self, ids):
+    #self is Scheduler
+    for cid in ids:
+        sus_card = self.col.getCard(cid)
+        sus_note = sus_card.note()
+        _remove_unseen_tags_for_card_and_note(sus_card, sus_note)
 
 
 def setup_browser_menu(browser):
@@ -77,9 +89,12 @@ def setup_browser_menu(browser):
     a = unseen_menu.addAction('Remove Unseen ("ns*") Tags From Selected Cards')
     browser.connect(a, SIGNAL("triggered()"), lambda b=browser: remove_unseen_tags_from_selected(b))
 
-#todo: remove tags if suspended?
+
 #todo: hide the tags in the reviewer html?
 #todo: menu action to set search string to show all
 addHook("browser.setupMenus", setup_browser_menu)
 Reviewer._answerCard = wrap(Reviewer._answerCard, answer_card_removing_unseen_tags, "before")
 Reviewer._showQuestion = wrap(Reviewer._showQuestion, change_background_color, "after")
+
+#By wrapping this, we cover suspending cards/notes etc
+Scheduler.suspendCards = wrap(Scheduler.suspendCards, suspend_cards_removing_unseen_tags, "before")
