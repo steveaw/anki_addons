@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """
+https://ankiweb.net/shared/info/1720844055
 # Adds "Quick Access" buttons to quickly change between frequently used note
 #   types in the "Add" cards dialog.
 # By default it adds two buttons to quickly switch between the Cloze and Basic

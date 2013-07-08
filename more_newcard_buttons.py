@@ -1,6 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 """
 Adds extra buttons to the Reviewer window for new cards
+https://ankiweb.net/shared/info/468253198
 
 Copyright: Steve AW <steveawa@gmail.com>
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html

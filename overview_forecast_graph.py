@@ -2,6 +2,8 @@
 """
 Adds the Stat Report's "Forecast Graph" to the main window's "Overview" page.
 
+https://ankiweb.net/shared/info/4219926982
+
 Copyright: Steve AW <steveawa@gmail.com>
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 

@@ -1,6 +1,7 @@
 ﻿# -*- coding: utf-8 -*-
 """
 Export the Browser's selected rows to a csv data file
+https://ankiweb.net/shared/info/1822267896
 
 Copyright: Steve AW <steveawa@gmail.com>
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html

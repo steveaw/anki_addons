@@ -2,6 +2,8 @@
 """
 Adds Search For Selected Text to the Reviewer Window's context/popup menu
 
+https://ankiweb.net/shared/info/798922495
+
 Copyright: Steve AW <steveawa@gmail.com>
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 
