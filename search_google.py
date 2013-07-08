@@ -26,9 +26,11 @@ from aqt.utils import tooltip
 from anki.hooks import runHook, addHook
 import urllib
 
+
 def selected_text_as_query(web_view):
     sel = web_view.page().selectedText()
     return " ".join(sel.split())
+
 
 def on_search_for_selection(web_view):
     sel_encode = selected_text_as_query(web_view).encode('utf8', 'ignore')
@@ -42,6 +44,7 @@ def on_search_for_selection(web_view):
 def contextMenuEvent(self, evt):
     # lazy: only run in reviewer
     import aqt
+
     if aqt.mw.state != "review":
         return
     m = QMenu(self)
@@ -49,15 +52,16 @@ def contextMenuEvent(self, evt):
     a.connect(a, SIGNAL("triggered()"),
               lambda: self.triggerPageAction(QWebPage.Copy))
     #Only change is the following statement
-    runHook("AnkiWebView.contextMenuEvent",self,m)
+    runHook("AnkiWebView.contextMenuEvent", self, m)
     m.popup(QCursor.pos())
 
-def insert_search_menu_action(anki_web_view,m):
+
+def insert_search_menu_action(anki_web_view, m):
     selected = selected_text_as_query(anki_web_view)
     truncated = (selected[:40] + '..') if len(selected) > 40 else selected
     a = m.addAction('Search %s For "%s" ' % (SEARCH_PROVIDER, truncated))
     a.connect(a, SIGNAL("triggered()"),
-         lambda wv=anki_web_view: on_search_for_selection(wv))
+              lambda wv=anki_web_view: on_search_for_selection(wv))
 
 
 AnkiWebView.contextMenuEvent = contextMenuEvent

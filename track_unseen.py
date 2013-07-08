@@ -47,9 +47,13 @@ def change_background_color(self):
     pot_unseen_card = self.card
     pot_unseen_note = pot_unseen_card.note()
     if pot_unseen_note.hasTag("nsN") or pot_unseen_note.hasTag("ns%s" % pot_unseen_card.ord):
-        #todo: this can get cached? By what?
+        #We have to remove this, and play nicely with other addons that may fiddle with background
         self.web.eval('document.body.style.backgroundColor = "#DCDCFF"')
 
+def wipe_background_for_nextCard(self):
+    #do this early enough so that any addon applying colour changes
+    #does it after
+    self.web.eval('document.body.style.backgroundColor = "#FFFFFF"')
 
 def _remove_unseen_tags_for_card_and_note(pot_unseen_card, pot_unseen_note):
     if pot_unseen_note.hasTag("nsN") or pot_unseen_note.hasTag("ns%s" % pot_unseen_card.ord):
@@ -95,6 +99,11 @@ def setup_browser_menu(browser):
 addHook("browser.setupMenus", setup_browser_menu)
 Reviewer._answerCard = wrap(Reviewer._answerCard, answer_card_removing_unseen_tags, "before")
 Reviewer._showQuestion = wrap(Reviewer._showQuestion, change_background_color, "after")
+
+
+
+
+Reviewer.nextCard = wrap(Reviewer.nextCard, wipe_background_for_nextCard, "before")
 
 #By wrapping this, we cover suspending cards/notes etc
 Scheduler.suspendCards = wrap(Scheduler.suspendCards, suspend_cards_removing_unseen_tags, "before")
