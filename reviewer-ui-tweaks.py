@@ -21,7 +21,7 @@ def	review_title(self):
 def change_background_color(self):
 #self is reviewer
 #$("#f"+i).css("background", cols[i]
-    #todo: this relies on /track_unseen.py:53 to chnage the colour back
+    #todo: this relies on /reviewer_track_unseen.py:53 to chnage the colour back
     if self.card.queue == 1:
         self.web.eval('document.body.style.backgroundColor = "#FFE0C0"')
 
