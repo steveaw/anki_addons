@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<!-- 
+	Sample icons file. This file looks like an SVG file with groups as its
+	children. Each group element has an ID that must match the ID of the button given
+	in the extension. The SVG inside the group makes up the actual icon, and
+	needs use a viewBox instead of width/height for it to scale	properly.
+	
+	Multiple icons can be included, each within their own group.
+-->
+
+        <g id="add_notes_single_mask">
+<svg width="102" height="102" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+ <g>
+  <title></title>
+  <rect id="svg_2" height="75" width="71" y="9" x="10.5" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="none"/>
+ </g>
+
+ <g>
+  <title></title>
+  <rect id="svg_3" height="13" width="19" y="30" x="24.5" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#ff0000" fill="#ff0000"/>
+  <rect id="svg_4" height="14" width="35" y="54" x="29.5" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#ff0000" fill="#ff0000"/>
+ </g>
+</svg>
+	</g>
+
+        
+        <g id="add_notes_separating_masks">
+<svg width="102" height="102" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+ <g>
+  <title></title>
+  <rect fill="#ffffff" stroke="#666666" stroke-width="2" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" x="21.5" y="20" width="74" height="78" id="svg_8"/>
+  <rect fill="#ffffff" stroke="#666666" stroke-width="2" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" x="16.5" y="16" width="72" height="74" id="svg_9"/>
+ </g>
+ <g>
+  <title></title>
+  <rect fill="#ffffff" stroke="#000000" stroke-width="2" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" x="10.5" y="9" width="71" height="75" id="svg_2"/>
+ </g>
+
+ <g>
+  <title></title>
+  <rect fill="#ff0000" stroke="#ff0000" stroke-width="2" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" x="24.5" y="30" width="19" height="13" id="svg_3"/>
+ </g>
+</svg>
+	</g>
+    
+    	<g id="add_notes_all_masks">
+		<svg width="102" height="102" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+ <g>
+  <title></title>
+  <rect fill="#ffffff" stroke="#666666" stroke-width="2" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" x="21.5" y="20" width="74" height="78" id="svg_8"/>
+  <rect fill="#ffffff" stroke="#666666" stroke-width="2" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" x="16.5" y="16" width="72" height="74" id="svg_9"/>
+ </g>
+ <g>
+  <title></title>
+  <rect fill="#ffffff" stroke="#000000" stroke-width="2" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" x="10.5" y="9" width="71" height="75" id="svg_2"/>
+ </g>
+
+ <g>
+  <title></title>
+  <rect fill="#ff0000" stroke="#ff0000" stroke-width="2" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" x="24.5" y="30" width="19" height="13" id="svg_3"/>
+  <rect fill="#00ffff" stroke="#00ffff" stroke-width="2" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" x="29.5" y="54" width="35" height="14" id="svg_4"/>
+ </g>
+</svg>
+	</g>
+    
+        	<g id="add_notes_progressive_masks">
+<svg width="102" height="102" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+ <g>
+  <title></title>
+  <rect id="svg_8" height="78" width="74" y="20" x="21.5" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#666666" fill="#ffffff"/>
+  <rect id="svg_9" height="74" width="72" y="16" x="16.5" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#666666" fill="#ffffff"/>
+ </g>
+ <g>
+  <title></title>
+  <rect id="svg_2" height="75" width="71" y="9" x="10.5" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#000000" fill="#ffffff"/>
+ </g>
+
+ <g>
+  <title></title>
+  <rect id="svg_3" height="20" width="50" y="30" x="24.5" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#ff0000" fill="#ff0000"/>
+  <rect id="svg_10" height="25" width="51" y="54" x="23.5" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="2" stroke="#ff0000" fill="#ff0000"/>
+ </g>
+</svg>
+	</g>
+</svg>
