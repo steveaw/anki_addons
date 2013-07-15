@@ -10,7 +10,7 @@ from aqt.utils import getOnlyText, showWarning, showInfo
 from aqt import mw
 
 
-def tag_notes_with_all_cards_unsuspended(browser):
+def tag_notes_with_all_cards_suspended(browser):
     browser.mw.checkpoint("Add AllSuspended Tags")
     browser.model.beginReset()
     for nid in browser.selectedNotes():
@@ -25,7 +25,7 @@ def tag_notes_with_all_cards_unsuspended(browser):
 
 def setupMenu(browser):
     a = QAction("Tag Notes With All Cards Suspended", browser)
-    browser.connect(a, SIGNAL("triggered()"), lambda b=browser: tag_notes_with_all_cards_unsuspended(b))
+    browser.connect(a, SIGNAL("triggered()"), lambda b=browser: tag_notes_with_all_cards_suspended(b))
     browser.form.menuEdit.addAction(a)
 
 

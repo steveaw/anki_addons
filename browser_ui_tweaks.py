@@ -4,7 +4,7 @@
 # License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 #
 from PyQt4.QtCore import SIGNAL, Qt
-from PyQt4.QtGui import QMenu, QCursor
+from PyQt4.QtGui import QMenu, QCursor, QApplication
 import json
 from aqt import mw
 from aqt.browser import Browser
@@ -46,14 +46,15 @@ def setup_table_with_context_menu(self):
                                 lambda pos: self.onTableViewContextMenu(pos))
 
 
-def onTableViewContextMenu(self, pos):
-    m = QMenu()
-    # a = m.addAction('Test')
-    # a.connect(a, SIGNAL("triggered()"),
-    #      lambda s=self: list([]))
-    runHook("Browser.tableViewContextMenuEvent", self, m)
-    #m.popup(QCursor.pos())
-    m.exec_(QCursor.pos())
+def set_search_text_to(self, txt):
+    if self.mw.app.keyboardModifiers() & Qt.ControlModifier:
+            cur = unicode(self.form.searchEdit.lineEdit().text())
+            if cur:
+                txt = cur + " " + txt
+    self.form.searchEdit.lineEdit().setText(txt)
+    self.onSearch()
+
+
 
 # Change editor
 ##########################################################################
@@ -67,6 +68,28 @@ def change_editor_colour_suspended(self, current, previous):
             self.editor.web.eval("setBackgrounds(%s);" % json.dumps(cols))
 
 
+def onTableViewContextMenu(self, pos):
+    m = QMenu()
+    a = m.addAction('Copy Selected cid')
+    a.connect(a, SIGNAL("triggered()"),
+              lambda s=self: QApplication.clipboard().setText(str(s.selectedCards()[0])))
+    a = m.addAction('Copy Selected nid')
+    a.connect(a, SIGNAL("triggered()"),
+              lambda s=self: QApplication.clipboard().setText(str(s.selectedNotes()[0])))
+
+    preset_search_menu = m.addMenu("Preset Searches")
+    a = preset_search_menu.addAction('Review cards due soon with long interval')
+    a.connect(a, SIGNAL("triggered()"),
+              lambda b=self: set_search_text_to(b, "prop:due>5 prop:due<7 prop:ivl>=10 is:review"))
+    a = preset_search_menu.addAction('Unseen cards')
+    a.connect(a, SIGNAL("triggered()"),
+              lambda b=self: set_search_text_to(b, "tag:ns*"))
+
+
+
+    runHook("Browser.tableViewContextMenuEvent", self, m)
+    #m.popup(QCursor.pos())
+    m.exec_(QCursor.pos())
 
 
 

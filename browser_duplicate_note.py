@@ -48,10 +48,10 @@ def duplicate_selected_note(browser):
     browser.model.endReset()
 
 
-def insert_browser_toolbar_html(self,m):
+def insert_table_view_menu_item(self,m):
     a = m.addAction('Duplicate Note')
     a.connect(a, SIGNAL("triggered()"),
          lambda s=self: duplicate_selected_note(s))
 
 #requires /browser_ui_tweaks.py
-addHook("Browser.tableViewContextMenuEvent", insert_browser_toolbar_html)
+addHook("Browser.tableViewContextMenuEvent", insert_table_view_menu_item)
