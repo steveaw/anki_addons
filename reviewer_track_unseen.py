@@ -36,9 +36,10 @@ def remove_unseen_tags_from_selected(self):
     for cid in selected_cids:
         unseen_card = self.col.getCard(cid)
         unseen_note = unseen_card.note()
-        unseen_note.deTag("nsN")
-        unseen_note.delTag("ns%s" % unseen_card.ord)
-        unseen_note.flush()
+        # unseen_note.delTag("nsN")
+        # unseen_note.delTag("ns%s" % unseen_card.ord)
+        # unseen_note.flush()
+        self._remove_unseen_tags_for_card_and_note(unseen_card, unseen_note)
 
 
 def change_background_color(self):
@@ -86,15 +87,23 @@ def suspend_cards_removing_unseen_tags(self, ids):
         _remove_unseen_tags_for_card_and_note(sus_card, sus_note)
 
 
+def show_all_unseen_cards(self):
+    #self is browser
+    self.form.searchEdit.lineEdit().setText("tag:ns*")
+    self.onSearch()
+
+
 def setup_browser_menu(browser):
     unseen_menu = browser.form.menuEdit.addMenu("Unseen Card Tracking")
     a = unseen_menu.addAction('Add Unseen ("ns*") Tags To Selected Cards')
     browser.connect(a, SIGNAL("triggered()"), lambda b=browser: add_unseen_tags_to_selected(b))
     a = unseen_menu.addAction('Remove Unseen ("ns*") Tags From Selected Cards')
     browser.connect(a, SIGNAL("triggered()"), lambda b=browser: remove_unseen_tags_from_selected(b))
+    a = unseen_menu.addAction('Show All Unseen Cards')
+    browser.connect(a, SIGNAL("triggered()"), lambda b=browser: show_all_unseen_cards(b))
 
 
-#todo: hide the tags in the reviewer html?
+
 #todo: menu action to set search string to show all
 addHook("browser.setupMenus", setup_browser_menu)
 Reviewer._answerCard = wrap(Reviewer._answerCard, answer_card_removing_unseen_tags, "before")

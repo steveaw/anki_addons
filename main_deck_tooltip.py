@@ -59,12 +59,13 @@ def _generate_jquery_scripts():
     This generates a js function for each deck's row based on did
     I am guessing that only one function is needed, but I couldn't figure out how to do it
     Somehow the render function needs to keep a reference to the outer context this.id
-    I don't know js or jquerry well enough to do that
+    I don't know js or jquery well enough to do that.
+    If you know, please let me know.
     """
     tip_script = "    $(function(){"
     template = """
     $('tr#%(id)s a').miniTip({
-        content: 'Loading...', offset: 1, delay: 350,
+        content: 'Loading...', offset: 1, delay: 200, maxW: '500px',
 		render: function(tt) {
         $('#miniTip_c').html(py_deck_inf.deck_information_for(%(id)s) );}});
         """
@@ -137,9 +138,14 @@ select count(id)from cards
 where queue = -1 and did in %s """ % self.deck_limit)
         self.add_row("Suspended:", suspended_count)
         self.add_row("Did:", self.did)
+        self.add_row("Today:",self.todayStats())
 
-        self.html += "<tr><td colspan='2'>%s</td></tr>" % self.todayStats()
-
+        #todo
+        """
+        Due tomorrow,next etc
+        If you studied every day:	6.1 minutes/day
+Average answer time:	17.5s (3 cards/minute)
+        """
 
     def todayStats(self):
         """
@@ -147,7 +153,7 @@ where queue = -1 and did in %s """ % self.deck_limit)
         Two changes made
         """
         #DeckInformation ... changed formatting
-        b = "<b>Today:</b>"
+        b = ""
         #DeckInformation ... changed to use our deck limit
         lim = "cid in (select id from cards where did in %s)" % self.deck_limit
         if lim:

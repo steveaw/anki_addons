@@ -86,5 +86,5 @@ def excuse_for_breakpoint(self):
     self
 
 Reviewer.onSuspendCard = wrap(Reviewer.onSuspendCard, onSuspendCard_appendId, "around")
-Reviewer.showContextMenu = showContextMenu
+#Reviewer.showContextMenu = showContextMenu
 addHook("Reviewer.contextMenuEvent", insert_reviewer_more_action)

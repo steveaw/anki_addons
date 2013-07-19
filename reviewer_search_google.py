@@ -66,5 +66,5 @@ def insert_search_menu_action(anki_web_view, m):
               lambda wv=anki_web_view: on_search_for_selection(wv))
 
 
-AnkiWebView.contextMenuEvent = contextMenuEvent
+#AnkiWebView.contextMenuEvent = contextMenuEvent
 addHook("AnkiWebView.contextMenuEvent", insert_search_menu_action)

@@ -16,6 +16,10 @@ from aqt.reviewer import Reviewer
 from aqt.webview import AnkiWebView
 import anki.js
 
+END_HOUR = 13
+
+START_HOUR = 6
+
 
 class ReviewerDockWidget(QObject):
     def __init__(self, mw):
@@ -33,6 +37,11 @@ class ReviewerDockWidget(QObject):
         dock.setAllowedAreas(Qt.BottomDockWidgetArea)
         dock.setFeatures(QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetVerticalTitleBar)
         dock.setWidget(w)
+        #todo: figure out what the left and top margin are
+        #todo: get resize events and update content
+        # w.setStyleSheet(" background-color: #FF0000;")
+        # dock.setStyleSheet(" background-color: #00FF00;")
+        # dock.layout().setContentsMargins(10,0,0,0)
         mw.addDockWidget(Qt.BottomDockWidgetArea, dock)
         return dock
 
@@ -127,10 +136,14 @@ class DailyReviewChartModel(QObject):
             if self.entries:
                 self.first_secs_offset = self.entries[0].secs_offset
                 self.last_secs_offset = self.entries[-1].secs_offset
-                self.start_offset_hour = min((self.first_secs_offset) // 3600, 6)
-                #Always show from 6-1PM
-                self.end_offset_hour = max(((self.last_secs_offset + 15 * 60 ) // 3600 + 1), 13)
-                assert (self.end_offset_hour <= 24)
+            else:
+                #put in reasonable defaults
+                self.first_secs_offset = START_HOUR * 60 * 60
+                self.last_secs_offset = END_HOUR * 60 * 60
+            #Always show at min from 6-1PM
+            self.start_offset_hour = min((self.first_secs_offset) // 3600, START_HOUR)
+            self.end_offset_hour = max(((self.last_secs_offset + 15 * 60 ) // 3600 + 1), END_HOUR)
+            assert (self.end_offset_hour <= 24)
 
     def calc_plot_index(self, offset):
         return (offset - (self.start_offset_hour * 3600)) // 120
@@ -143,13 +156,14 @@ class DailyReviewChartModel(QObject):
 
     #todo: backcolor ... Designer?
     #todo: colors for different decks/new cards.
+    #todo: try latest version
     # or just a vetical line when a desk switch is detected?
     # blue for new cards
         #todo: red dots for fails?
         BAR_HEIGHT = 8
 
-        if not self.entries: return ""
-
+        #if not self.entries: return ""
+        if not mw.col: return ""
         plot_size = int(( self.end_offset_hour - self.start_offset_hour + 1) * (3600 // 120))
         plot_non_new = [0] * plot_size
         plot_new = [0] * plot_size
@@ -192,11 +206,11 @@ class DailyReviewChartModel(QObject):
 
 
         #Add red column
-        self.int = int(time.time() - (self.today_start_id / 1000))
-        if self.int > (self.last_secs_offset + 35):
+        self.secs_since_last = int(time.time() - (self.today_start_id / 1000))
+        if self.secs_since_last > (self.last_secs_offset + 35):
             grid_val["markings"].append(
                 dict(xaxis={"from": self.calc_plot_index(self.last_secs_offset),
-                            "to": max((self.calc_plot_index(self.int) + 1),
+                            "to": max((self.calc_plot_index(self.secs_since_last) + 1),
                                       (self.calc_plot_index(self.last_secs_offset) + 1))},
                      color="rgba(255, 0, 0, 0.7)", lineWidth=1))
 
@@ -218,7 +232,16 @@ class DailyReviewChartModel(QObject):
                                                yaxis=dict(min=0, max=BAR_HEIGHT, ticks=[[0, "0"], [5, "5"]]),
                                                grid=grid_val
                          )))
-        floater_html = "Ease: %s" % self.last_ease
+        #todo: hack test
+        count = list(mw.col.sched.counts(mw.reviewer.card))[2] if mw.state == "review" else "na"
+
+        floater_html = """
+        Ease: %s<br>
+        <div style="font-size:20px;color:#007700"> %s</div>
+        """ % (self.last_ease , count)
+
+
+
         inner_script = """
 <script type="text/javascript">
 	$(function() {
@@ -273,12 +296,14 @@ html, body,  { height: 100%; min-height: 100%; }
 </head>""" % (css, anki.js.jquery + anki.js.plot)
 
 
-def cardStats(on):
+def toggle_chart_dock(on):
     dock.toggle()
-
-
-def updateDockNow():
+    #will stop the timer if not shown
     dock._update()
+
+
+# def updateDockNow():
+#     dock._update()
 
 
 def answer_card_updating_graph(self, ease):
@@ -292,20 +317,14 @@ def profile_loaded_hook():
 
 
 
-cardStats(True)
+toggle_chart_dock(True)
 
 action = QAction(mw)
 action.setText("Review Chart")
 action.setCheckable(True)
 mw.form.menuTools.addAction(action)
-mw.connect(action, SIGNAL("toggled(bool)"), cardStats)
-
-action2 = QAction(mw)
-action2.setText("Update Review Chart")
-mw.form.menuTools.addAction(action2)
-mw.connect(action2, SIGNAL("triggered()"), updateDockNow)
-
-
+#todo: fix this
+mw.connect(action, SIGNAL("toggled(bool)"), toggle_chart_dock)
 
 
 
