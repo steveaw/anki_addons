@@ -1,18 +1,35 @@
 # -*- coding: utf-8 -*-
-#Based on the fantastic Image Occlusion addon by  tmbb@campus.ul.pt
-#Note this doesn't setup note types etc, so it won't work in a fresh anki install
-#svg-edit a fresh install +
-#  svg-edit-2.5.1\extensions\ext-picocc.js
-#  svg-edit-2.5.1\extensions\picocc-icon.xml
+"""
+Simple Picture Occlusion
+Based on the fantastic Image Occlusion addon by  tmbb@campus.ul.pt
 
+I started work on this when imgocc2 was broken, but since then Tiago has released a fix
+so there is no need for this addon to be made shared/public.
+
+Notes (and difference to image occlusion 2)
+ -This doesn't setup note types etc, so it won't work in a fresh anki install.
+    I have included a sample deck that includes the model (not tested)
+ -svg-edit a fresh install. No changes or files are added to /svg-edit-2.5.1
+ -The original image is loaded as a background image, so it can not be edited.
+    This simplifies the code greatly as the addon needs only to manipulate
+    svg xml, not bitmaps
+ -The dialog is opened modally to add cards, and uses the AddCards dialog's
+    current settings for deck/tags etc. In addition, it is optimized for my
+    work flow and will copy across other fields I commonly use.
+ -Instead of toolbar buttons to add the notes, this uses standard dialog buttons
+
+"""
 import os
 import datetime
 import random
 import string
 import copy
+from PyQt4.QtCore import SIGNAL, Qt
+from PyQt4.QtGui import QDialog, QVBoxLayout, QApplication
+from PyQt4.QtWebKit import QWebView
+import svg_edit_dialog
 from PyQt4 import QtCore, QtGui, QtWebKit
 from aqt import mw, utils, webview
-from aqt.qt import *
 from anki import hooks
 from aqt.utils import showInfo, showWarning
 from aqt.utils import saveGeom, restoreGeom
@@ -21,24 +38,28 @@ from anki.notes import Note
 from aqt.utils import tooltip
 
 
-
 addons_folder = mw.pm.addonFolder()
 svg_edit_dir = os.path.join(addons_folder, 'simple_picocc', 'svg-edit-2.5.1')
 svg_edit_path = os.path.join(svg_edit_dir, 'svg-editor.html')
 
 ###############################################################################
-# Add
-###############################################################################
 #svg.wv.page().mainFrame().evaluateJavaScript("svgCanvas.svgCanvasToString()")
+# "C:\Python27\python.exe" "C:\Python27\Lib\site-packages\PyQt4\uic\pyuic.py" svg_edit_dialog.ui > svg_edit_dialog.py
 ###############################################################################
 class PicOccSVGEditDialog(QDialog):
     def __init__(self, parent=None):
-        super(PicOccSVGEditDialog, self).__init__(parent)
+        QDialog.__init__(self, parent=None)
+        self.ui = svg_edit_dialog.Ui_SimplePicOccQDialog()
+        self.ui.setupUi(self)
         self.web_view_widget = QWebView()
         l = QVBoxLayout()
         l.setMargin(0)
         l.addWidget(self.web_view_widget)
-        self.setLayout(l)
+        # self.setLayout(l)
+        self.ui.centralWidget.setLayout(l)
+        self.connect(self.ui.singleCardButton, SIGNAL("clicked()"), self.add_notes_single_mask)
+        self.connect(self.ui.multiButton, SIGNAL("clicked()"), self.add_notes_multiple_masks)
+        self.connect(self.ui.multiMaskedButton, SIGNAL("clicked()"), self.add_notes_multiple_hiding_masks)
         restoreGeom(self, "PicOccSVGEditDialog")
 
     def initialize_webview_for(self, path, size, ed, kybd):
@@ -47,7 +68,7 @@ class PicOccSVGEditDialog(QDialog):
         self.image_size = size
         self.current_editor = ed
         #Keep hold of this so we can pass it to the NoteGenerator instance
-        self.kbd_modifiers=kybd
+        self.kbd_modifiers = kybd
 
         url = QtCore.QUrl.fromLocalFile(svg_edit_path)
         url.setQueryItems([('initStroke[opacity]', '0'),
@@ -61,28 +82,24 @@ class PicOccSVGEditDialog(QDialog):
         self.web_view_widget.setUrl(url)
         self.web_view_widget.page().mainFrame().addToJavaScriptWindowObject("pyObj", self)
 
-    def add_note_mask_style(self, svg_contents, using_subclass):
-        saveGeom(self, "PicOccSVGEditDialog")
-        self.close()
-        gen = using_subclass(self.image_path, self.current_editor, self.kbd_modifiers , svg_contents)
+    def add_note_mask_style(self, using_subclass):
+        svg_contents = self.web_view_widget.page().mainFrame().evaluateJavaScript("svgCanvas.svgCanvasToString()")
+        gen = using_subclass(self.image_path, self.current_editor, self.kbd_modifiers, svg_contents)
         gen.generate_notes()
-
-    @QtCore.pyqtSlot(str)
-    def add_notes_separating_masks(self, svg_contents):
-        self.add_note_mask_style(svg_contents, PicOccNoteGeneratorSeparate)
+        saveGeom(self, "PicOccSVGEditDialog")
+        self.accept()
 
 
-    @QtCore.pyqtSlot(str)
-    def add_notes_all_masks(self, svg_contents):
-        self.add_note_mask_style(svg_contents, PicOccNoteGeneratorHiding)
+    def add_notes_multiple_masks(self):
+        self.add_note_mask_style(PicOccNoteGeneratorSeparate)
 
-    @QtCore.pyqtSlot(str)
-    def add_notes_progressive_masks(self, svg_contents):
-        self.add_note_mask_style(svg_contents, PicOccNoteGeneratorProgressive)
 
-    @QtCore.pyqtSlot(str)
-    def add_notes_single_mask(self, svg_contents):
-        self.add_note_mask_style(svg_contents, PicOccNoteGeneratorSingle)
+    def add_notes_multiple_hiding_masks(self):
+        self.add_note_mask_style(PicOccNoteGeneratorHiding)
+
+
+    def add_notes_single_mask(self):
+        self.add_note_mask_style(PicOccNoteGeneratorSingle)
 
 
 class PicOccNoteGenerator(object):
@@ -99,7 +116,7 @@ class PicOccNoteGenerator(object):
         #todo: if no notes, delete the image?
         for i in range(len(masks)):
             self._save_mask_and_add_note(i, masks[i])
-        tooltip(("Cards added: %s" % len(masks) ), period=1000)
+        tooltip(("Cards added: %s" % len(masks) ), period=1500, parent=self.current_editor.parentWindow)
 
     def _generate_mask_svgs(self):
         #Note this gets reimplemented by PicOccNoteGeneratorSingle
@@ -110,12 +127,13 @@ class PicOccNoteGenerator(object):
         #assume all masks are on a single layer
         layer_node = layer_nodes[0]
         mask_node_indexes = []
+        #todo: iter
         for i in range(len(layer_node.childNodes)):
             node = layer_node.childNodes[i]
             if (node.nodeType == node.ELEMENT_NODE) and (node.nodeName != 'title'):
                 mask_node_indexes.append(i)
-            # mask_node_indexes contains the indexes of the childNodes that are elements
-        # assume that all are masks. Different subclasses do diffeent thigns with them
+                # mask_node_indexes contains the indexes of the childNodes that are elements
+            # assume that all are masks. Different subclasses do different things with them
         masks = self._generate_mask_svgs_for(mask_node_indexes)
         return masks
 
@@ -167,7 +185,8 @@ class PicOccNoteGenerator(object):
 
         def fname2img(path):
             return '<img src="%s" />' % os.path.split(path)[1]
-
+        #This is all highly specific to my own workflow/note models etc
+        #but it should not break
         extra_field = field_content(u'Extra') if self.kbd_modifiers["ctrl"] else u''
         intro_field = editor_note.fields[0] if self.kbd_modifiers["shift"] else u''
         new_note.fields = [('%s' % new_note.id), fname2img(self.image_path), extra_field,
