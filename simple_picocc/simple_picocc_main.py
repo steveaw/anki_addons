@@ -29,7 +29,7 @@ svg_edit_path = os.path.join(svg_edit_dir, 'svg-editor.html')
 ###############################################################################
 # Add
 ###############################################################################
-
+#svg.wv.page().mainFrame().evaluateJavaScript("svgCanvas.svgCanvasToString()")
 ###############################################################################
 class PicOccSVGEditDialog(QDialog):
     def __init__(self, parent=None):
