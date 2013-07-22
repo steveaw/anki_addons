@@ -2,6 +2,8 @@
 """
 Shows a tooltip on the main window deck browser page
 
+https://ankiweb.net/shared/info/1819828168
+
 Copyright: Steve AW <steveawa@gmail.com>
 License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 
@@ -138,7 +140,7 @@ select count(id)from cards
 where queue = -1 and did in %s """ % self.deck_limit)
         self.add_row("Suspended:", suspended_count)
         self.add_row("Did:", self.did)
-        self.add_row("Today:",self.todayStats())
+        self.add_row("Today:", self.todayStats())
 
         #todo
         """
