@@ -11,6 +11,9 @@ from aqt import mw
 
 
 def tag_notes_with_all_cards_suspended(browser):
+    if not browser.form.tableView.selectionModel().hasSelection():
+        showWarning("Please select 1 or more rows", browser, help="")
+        return
     browser.mw.checkpoint("Add AllSuspended Tags")
     browser.model.beginReset()
     for nid in browser.selectedNotes():

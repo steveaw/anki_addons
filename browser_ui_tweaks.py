@@ -4,7 +4,7 @@
 # License: GNU GPL, version 3 or later; http://www.gnu.org/copyleft/gpl.html
 #
 from PyQt4.QtCore import SIGNAL, Qt
-from PyQt4.QtGui import QMenu, QCursor, QApplication
+from PyQt4.QtGui import QMenu, QCursor, QApplication, QHeaderView
 import json
 from aqt import mw
 from aqt.browser import Browser
@@ -68,6 +68,22 @@ def change_editor_colour_suspended(self, current, previous):
             self.editor.web.eval("setBackgrounds(%s);" % json.dumps(cols))
 
 
+def setColumnSizes(self):
+    hh = self.form.tableView.horizontalHeader()
+    for i in range(len(self.model.activeCols)):
+         hh.setResizeMode(i, QHeaderView.Interactive)
+        # if hh.visualIndex(i) == len(self.model.activeCols) - 1:
+        #     hh.setResizeMode(i, QHeaderView.Stretch)
+        # else:
+        #     hh.setResizeMode(i, QHeaderView.Interactive)
+
+def set_column_size_to_default(self):
+    for i in range(len(self.model.activeCols)):
+         self.form.tableView.setColumnWidth(i,75)
+
+def change_min_section_size(self):
+    self.form.tableView.horizontalHeader().setMinimumSectionSize(75)
+
 def onTableViewContextMenu(self, pos):
     m = QMenu()
     a = m.addAction('Copy Selected cid')
@@ -85,7 +101,9 @@ def onTableViewContextMenu(self, pos):
     a.connect(a, SIGNAL("triggered()"),
               lambda b=self: set_search_text_to(b, "tag:ns*"))
 
-
+    a = m.addAction('Set Columns to Min Size')
+    a.connect(a, SIGNAL("triggered()"),
+              lambda s=self: set_column_size_to_default(s))
 
     runHook("Browser.tableViewContextMenuEvent", self, m)
     #m.popup(QCursor.pos())
@@ -100,5 +118,6 @@ Browser.setupTable = wrap(Browser.setupTable, setup_table_changing_row_colors, "
 Browser.setupTable = wrap(Browser.setupTable, setup_table_with_context_menu, "after")
 Browser.updateFont = wrap(Browser.updateFont, setup_table_changing_row_height, "after")
 Browser.onTableViewContextMenu = onTableViewContextMenu
-
+Browser.setColumnSizes = setColumnSizes
 Browser.onRowChanged = wrap(Browser.onRowChanged, change_editor_colour_suspended, "after")
+Browser.setupHeaders=wrap(Browser.setupHeaders, change_min_section_size,"after")

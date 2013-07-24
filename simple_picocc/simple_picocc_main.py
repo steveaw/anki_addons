@@ -80,7 +80,7 @@ class PicOccSVGEditDialog(QDialog):
         url.addQueryItem('dimensions', '{0},{1}'.format(self.image_size.width(), self.image_size.height()))
         url.addQueryItem('bkgd_url', QtCore.QUrl.fromLocalFile(self.image_path).toString())
         self.web_view_widget.setUrl(url)
-        self.web_view_widget.page().mainFrame().addToJavaScriptWindowObject("pyObj", self)
+
 
     def add_note_mask_style(self, using_subclass):
         svg_contents = self.web_view_widget.page().mainFrame().evaluateJavaScript("svgCanvas.svgCanvasToString()")
