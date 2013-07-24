@@ -1,4 +1,4 @@
-A selection of Anki addons in various stages of development. 
+A selection of [Anki](http://ankisrs.net/) [addons](https://ankiweb.net/shared/addons/) in various stages of development.
 They are not suitable for general use, and could easily damage your Anki installation/database etc.
 For addons suitable for end users, please go to: https://ankiweb.net/shared/addons/
 
@@ -13,7 +13,7 @@ Note: while I won't be doing any addon development, during semester I spend a lo
 - addcards_more_newcard_buttons.py [Add more review answer buttons for new cards] (https://ankiweb.net/shared/info/468253198)
 - addcards_quick_change_notes.py [Quick change Note buttons](https://ankiweb.net/shared/info/1720844055)
 - browse_card_creation.py [Browse card creation] (https://ankiweb.net/shared/info/3466942638)
-- browser_open_added_today.py [Open Browser from the Add Window History menu] https://ankiweb.net/shared/info/4168112055
+- browser_open_added_today.py [Open Browser from the Add Window History menu] (https://ankiweb.net/shared/info/4168112055)
 - export_cards_to_csv.py [Export Browser's card list contents to CSV file](https://ankiweb.net/shared/info/1822267896)
 - overview_forecast_graph.py [Forecast graph on Overview page](https://ankiweb.net/shared/info/4219926982)
 - main_deck_tooltip.py [Deck window tooltip showing additional information] (https://ankiweb.net/shared/info/1819828168)
@@ -22,7 +22,7 @@ Note: while I won't be doing any addon development, during semester I spend a lo
 - reviewer_show_cardinfo.py
 
 ### The following are not suitable for addons.
- I actually uploaded some of these by mistake originally as I figured out pycharm's git integration. However, if Anki had an "advanced options/settings" api+ui (say like firefox), then these kinds of addons could be shared in the future
+ I actually uploaded some of these by mistake originally as I figured out pycharm's git integration :) However, if Anki had an "advanced options/settings" api+ui (say like firefox), then these kinds of addons could be shared in the future
 
 - browser_ui_tweaks.py  ... change minor things in the browser.
 - main_ui_tweaks.py ... ditto
@@ -34,7 +34,7 @@ Note: while I won't be doing any addon development, during semester I spend a lo
 
 Either they are too specific to my workflow, too hard to explain, or could lead to too many support emails :)
 
-- *simple_picocc* ... This is a derivative of Tiago's (tmbb) image occlusion 2 addons. All thanks and credit to Tiago. I use image occlusion a lot for my card creation. I started work on this when it appeared the original addon was not maintained. Since then, Tiago has released a new version, so it is not necessary to release this. However, I did end up rewriting the whole addon and taking a fairly different approach to the original. This addon is far less flexible than the original, and rather than being designed to stand alone as a card creation window, it works as a modal dialog to the editor window, and makes use of that to obtain the note's deck/tags etc. The benefit of sacrificing the power and flexibility of the original is that the implementation is fairly simple, and the code comes out very cleanly (it just involves a bit of xml manipulation).
+- **simple_picocc** ... This is a derivative of Tiago's (tmbb) image occlusion 2 addons. All thanks and credit to Tiago. I use image occlusion a lot for my card creation. I started work on this when it appeared the original addon was not maintained. Since then, Tiago has released a new version, so it is not necessary to release this. However, I did end up rewriting the whole addon and taking a fairly different approach to the original. This addon is far less flexible than the original, and rather than being designed to stand alone as a card creation window, it works as a modal dialog to the editor window, and makes use of that to obtain the note's deck/tags etc. The benefit of sacrificing the power and flexibility of the original is that the implementation is fairly simple, and the code comes out very cleanly (it just involves a bit of xml manipulation).
 - browser_duplicate_note.py ... This creates a duplicate note (same content, with created timestamp just after the target note). This allows a single note to be effectively split into two, and appear in the browser next to (when sorting on creation date) the original. At this stage I don't copy across the card state, but I have other tools to do that. I will use it this semester and see how it goes.
 - browser_tag_all_suspended.py ... I use "suspend card" as a delete function. It means that I don't have to worry if I am deleting a note that has other cards (this is actually how I think "Delete" should work in Anki). So the suspended card list serves as a kind of recycle bin for me. This addon searches through all notes to find notes which have all of their cards suspended, and then adds a tag "AllSuspended" to those notes. I can then use that tag to delete (actually delete) those notes.
 - editor_commands.py ... this is a hodge-podge of editor commands (44 at last count!) that do various things in the editor such as: insert special (maths/stats) characters, reformat text into lists, add/remove clozes automatically, clean up text pasted in from pdfs, add references from html pastes, and also for info pasted in from my pdf viewer (the pdfx* methods), plus anything else I can think of to help create cards! A lot of this won't make sense. many of commands work hand in hand with autohotkey scripts I have setup, along with my pdf viewer. The pdfx* methods allow me to select some text in a pdf, press Win-V, and have that text copied, "cleaned" and placed into the Anki Add window along with a link back to the pdf (with page bookmark) and a screenshot of that pdf slide also inserted into another field. It works really well for me, but something like that is obviously highly personalized to my workflow.
