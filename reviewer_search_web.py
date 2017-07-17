@@ -19,8 +19,11 @@ Github page:  https://github.com/steveaw/anki_addons
 Anki addons: https://groups.google.com/forum/?hl=en#!forum/anki-addons
 """
 
-SEARCH_PROVIDER = 'Google'
-SEARCH_URL = 'http://www.google.com/search?q=%s&ie=utf-8&oe=utf-8'
+providers = [
+    ['Google', 'http://www.google.com/search?q=%s&ie=utf-8&oe=utf-8'],
+    ['Wikipedia', 'http://en.wikipedia.org/wiki/wiki.html?search=%s'],
+    ['Wiktionary', 'https://en.wiktionary.org/wiki/%s']
+]
 
 from aqt.webview import AnkiWebView
 from aqt.qt import *
@@ -34,10 +37,10 @@ def selected_text_as_query(web_view):
     return " ".join(sel.split())
 
 
-def on_search_for_selection(web_view):
+def on_search_for_selection(web_view, search_url):
     sel_encode = selected_text_as_query(web_view).encode('utf8', 'ignore')
     #need to do this the long way around to avoid double % encoding
-    url = QUrl.fromEncoded(SEARCH_URL % urllib.quote(sel_encode))
+    url = QUrl.fromEncoded(search_url % urllib.quote(sel_encode))
     #openLink(SEARCH_URL + sel_encode)
     tooltip(_("Loading..."), period=1000)
     QDesktopServices.openUrl(url)
@@ -58,13 +61,17 @@ def contextMenuEvent(self, evt):
     m.popup(QCursor.pos())
 
 
-def insert_search_menu_action(anki_web_view, m):
-    selected = selected_text_as_query(anki_web_view)
-    truncated = (selected[:40] + '..') if len(selected) > 40 else selected
-    a = m.addAction('Search %s For "%s" ' % (SEARCH_PROVIDER, truncated))
-    a.connect(a, SIGNAL("triggered()"),
-              lambda wv=anki_web_view: on_search_for_selection(wv))
+def menu_action_factory(provider):
+    def insert_search_menu_action(anki_web_view, m):
+        selected = selected_text_as_query(anki_web_view)
+        truncated = (selected[:40] + '..') if len(selected) > 40 else selected
+        a = m.addAction('Search %s For "%s" ' % (provider[0], truncated))
+        a.connect(a, SIGNAL("triggered()"),
+                  lambda wv=anki_web_view: on_search_for_selection(wv, provider[1]))
+
+    return insert_search_menu_action
 
 
 #AnkiWebView.contextMenuEvent = contextMenuEvent
-addHook("AnkiWebView.contextMenuEvent", insert_search_menu_action)
+for provider in providers:
+    addHook("AnkiWebView.contextMenuEvent", menu_action_factory(provider))
