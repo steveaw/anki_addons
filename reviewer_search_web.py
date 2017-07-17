@@ -20,7 +20,7 @@ Anki addons: https://groups.google.com/forum/?hl=en#!forum/anki-addons
 """
 
 providers = [
-    ['Google Images', 'https://www.google.com/search?tbm=isch&q=%s'],
+    ['Google', 'http://www.google.com/search?q=%s&ie=utf-8&oe=utf-8'],
     ['Wikipedia', 'http://en.wikipedia.org/wiki/wiki.html?search=%s'],
     ['Wiktionary', 'https://en.wiktionary.org/wiki/%s']
 ]
@@ -40,8 +40,8 @@ def selected_text_as_query(web_view):
 def on_search_for_selection(web_view, search_url):
     sel_encode = selected_text_as_query(web_view).encode('utf8', 'ignore')
     #need to do this the long way around to avoid double % encoding
-    url = QUrl.fromEncoded(SEARCH_URL % urllib.quote(sel_encode))
-    #openLink(search_url + sel_encode)
+    url = QUrl.fromEncoded(search_url % urllib.quote(sel_encode))
+    #openLink(SEARCH_URL + sel_encode)
     tooltip(_("Loading..."), period=1000)
     QDesktopServices.openUrl(url)
 
